@@ -16,6 +16,7 @@ def index(name='GUEST'):
 
 @app.route('/stock')
 def stock():
+    time = get_time()
     stocks = [
         {'分類': '日經指數', '指數': '22,920.30'},
         {'分類': '韓國綜合', '指數': '2,304.59'},
@@ -23,10 +24,7 @@ def stock():
         {'分類': '上海綜合', '指數': '3,380.68'}
     ]
 
-    for stock in stocks:
-        print(stock['分類'], stock['指數'])
-
-    return render_template('./stock.html', stocks=stocks)
+    return render_template('./stock.html', time=time, stocks=stocks)
 
 
 @app.route('/test')

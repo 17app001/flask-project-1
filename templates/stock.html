@@ -19,12 +19,17 @@
         .stock {
             color: red;
         }
+
+        h2 {
+            color: red;
+        }
     </style>
 </head>
 
 <body>
-    <!-- {{stocks}} -->
     <h1>亞股資訊</h1>
+    {{time}}
+    {%if stocks%}
     <ul>
         {%for stock in stocks%}
         <li>{{stock['分類']}}
@@ -32,6 +37,9 @@
         </li>
         {%endfor%}
     </ul>
+    {%else%}
+    <h2>取得資料失敗，請稍後在試...</h2>
+    {%endif%}
 </body>
 
 </html>
