@@ -1,16 +1,25 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from datetime import datetime
 import json
+
+
 from scrape.pm25 import get_pm25
 
 
 app = Flask(__name__)
 
 
-@app.route('/pm25', methods=['GET'])
+@app.route('/pm25', methods=['GET', 'POST'])
 def pm25():
-    columns, values = get_pm25()
+    sort = False
+    if request.method == 'POST':
+        if request.form.get('sort'):
+            sort = True
+        if request.form.get('update'):
+            sort = False
 
+    columns, values = get_pm25(sort)
+    time = get_time()
     return render_template('./pm25.html', **locals())
     # API
     # return json.dumps({'columns': columns, 'values': values}, ensure_ascii=False)
