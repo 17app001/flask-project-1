@@ -1,8 +1,19 @@
 from flask import Flask, render_template
 from datetime import datetime
+import json
+from scrape.pm25 import get_pm25
 
 
 app = Flask(__name__)
+
+
+@app.route('/pm25', methods=['GET'])
+def pm25():
+    columns, values = get_pm25()
+
+    return render_template('./pm25.html', **locals())
+    # API
+    # return json.dumps({'columns': columns, 'values': values}, ensure_ascii=False)
 
 
 @app.route('/')
