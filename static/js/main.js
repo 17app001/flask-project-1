@@ -1,4 +1,11 @@
-const chart1El = document.querySelector('#main');
+const chart1El = document.querySelector("#main");
+const pm25HighSite = document.querySelector("#pm25_high_site");
+const pm25HighValue = document.querySelector("#pm25_high_value");
+const pm25LowSite = document.querySelector("#pm25_low_site");
+const pm25LowValue = document.querySelector("#pm25_low_value");
+
+console.log()
+
 let chart1 = echarts.init(chart1El);
 
 
@@ -7,7 +14,29 @@ $(document).ready(() => {
 });
 
 
+function renderMaxPM25(data) {
+    console.log(data);
+    let stationName = data["stationName"];
+    let result = data["result"];
+
+    let maxIndex = result.indexOf(Math.max(...result));
+    let minIndex = result.indexOf(Math.min(...result));
+
+    pm25HighSite.innerText = stationName[maxIndex];
+    pm25HighValue.innerText = result[maxIndex];
+    pm25LowSite.innerText = stationName[minIndex];
+    pm25LowValue.innerText = result[minIndex];
+    console.log(maxIndex, minIndex)
+
+}
+
 function drawPM25() {
+    pm25HighSite.innerText = "N/A";
+    pm25HighValue.innerText = 0;
+    pm25LowSite.innerText = "N/A";
+    pm25LowValue.innerText = 0;
+
+
     chart1.showLoading();
     $.ajax(
         {
@@ -16,8 +45,10 @@ function drawPM25() {
             dataType: "json",
             success: (data) => {
                 chart1.hideLoading();
-                console.log(data);
+
+                $("#date").text(data["time"]);
                 drawChart1(data);
+                renderMaxPM25(data);
             },
             error: () => {
                 chart1.hideLoading();

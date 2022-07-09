@@ -17,7 +17,7 @@ def get_pm25_json():
     # Y軸
     result = [value[2] for value in values]
 
-    return json.dumps({'stationName': stationName, 'result': result}, ensure_ascii=False)
+    return json.dumps({'time': get_time(), 'stationName': stationName, 'result': result}, ensure_ascii=False)
 
 
 @app.route('/pm25-chart')
