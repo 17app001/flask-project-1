@@ -10,6 +10,21 @@ url = 'https://sta.ci.taiwan.gov.tw/STA_AirQuality_v2/v1.0/Datastreams?$expand=T
 df = None
 
 
+
+def get_city_pm25(city):
+    datas=df.groupby('city').get_group(city)[['stationName','result']].values
+
+    stationName=[data[0] for data in datas]
+    result=[data[1] for data in datas]
+
+    return stationName,result
+
+def get_citys():
+    global df
+
+    return list(set(df['city']))
+
+
 def get_six_pm25():
     global df
 
@@ -58,6 +73,10 @@ def get_pm25(sort=False, show=False):
     return columns, values
 
 
+get_pm25()
+
 if __name__ == '__main__':
     print(get_pm25())
     print(get_six_pm25())
+    print(get_citys())
+    print(get_city_pm25('新北市'))

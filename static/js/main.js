@@ -1,20 +1,39 @@
 const chart1El = document.querySelector("#main");
 const chart2El = document.querySelector("#six");
+const chart3El = document.querySelector("#county");
+
 
 const pm25HighSite = document.querySelector("#pm25_high_site");
 const pm25HighValue = document.querySelector("#pm25_high_value");
 const pm25LowSite = document.querySelector("#pm25_low_site");
 const pm25LowValue = document.querySelector("#pm25_low_value");
 
-console.log()
+
+
 
 let chart1 = echarts.init(chart1El);
 let chart2 = echarts.init(chart2El);
+let chart3 = echarts.init(chart3El);
 
 
 $(document).ready(() => {
     drawPM25();
+    drawSixPM25();
+    drawCityPM25('雲林縣');
 });
+
+
+window.onresize = function () {
+    chart1.resize();
+    chart2.resize();
+    chart3.resize();
+}
+
+$("#county_btn").click(() => {
+    let city = document.querySelector("#select_county").value;
+    drawCityPM25(city);
+});
+
 
 
 function renderMaxPM25(data) {
@@ -29,8 +48,26 @@ function renderMaxPM25(data) {
     pm25HighValue.innerText = result[maxIndex];
     pm25LowSite.innerText = stationName[minIndex];
     pm25LowValue.innerText = result[minIndex];
-    console.log(maxIndex, minIndex)
+    console.log(maxIndex, minIndex);
+}
 
+function drawCityPM25(city) {
+    chart3.showLoading();
+    $.ajax(
+        {
+            url: `/city-pm25/${city}`,
+            type: "POST",
+            dataType: "json",
+            success: (data) => {
+                chart3.hideLoading();
+                drawChart3(data);
+            },
+            error: () => {
+                chart3.hideLoading();
+                alert(`${city}縣市資料讀取失敗!`);
+            }
+        }
+    );
 }
 
 
@@ -54,7 +91,6 @@ function drawSixPM25() {
     );
 }
 
-
 function drawPM25() {
     pm25HighSite.innerText = "N/A";
     pm25HighValue.innerText = 0;
@@ -73,7 +109,7 @@ function drawPM25() {
                 $("#date").text(data["time"]);
                 drawChart1(data);
                 renderMaxPM25(data);
-                drawSixPM25();
+
             },
             error: () => {
                 chart1.hideLoading();
@@ -161,6 +197,39 @@ function drawChart2(datas) {
     option && chart2.setOption(option);
 }
 
+
+
+function drawChart3(datas) {
+    var option;
+    option = {
+        legend: {
+            data: ['PM2.5']
+        },
+        xAxis: {
+            type: 'category',
+            data: datas['stationName']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                itemStyle: {
+                    color: '#800080'
+                },
+                name: 'PM2.5',
+                data: datas['result'],
+                type: 'bar',
+                showBackground: true,
+                backgroundStyle: {
+                    color: 'rgba(180, 180, 180, 0.2)'
+                }
+            }
+        ]
+    };
+
+    option && chart3.setOption(option);
+}
 
 
 

@@ -3,10 +3,17 @@ from datetime import datetime
 import json
 
 
-from scrape.pm25 import get_pm25, get_six_pm25
+from scrape.pm25 import get_pm25, get_six_pm25, get_citys, get_city_pm25
 
 
 app = Flask(__name__)
+
+
+@app.route('/city-pm25/<city>',methods=['POST'])
+def get_city_json(city):
+    stationName, result = get_city_pm25(city)
+
+    return json.dumps({'stationName': stationName, 'result': result}, ensure_ascii=False)
 
 
 @app.route('/six-pm25-json', methods=['POST'])
@@ -29,7 +36,8 @@ def get_pm25_json():
 
 @app.route('/pm25-chart')
 def pm25_chart():
-    return render_template("pm25-chart.html")
+
+    return render_template("pm25-chart-bulma.html", countys=get_citys())
 
 
 @app.route('/pm25', methods=['GET', 'POST'])
