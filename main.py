@@ -9,6 +9,22 @@ from scrape.pm25 import get_pm25
 app = Flask(__name__)
 
 
+@app.route('/pm25-json', methods=['POST'])
+def get_pm25_json():
+    columns, values = get_pm25()
+    # X軸
+    stationName = [value[1] for value in values]
+    # Y軸
+    result = [value[2] for value in values]
+
+    return json.dumps({'stationName': stationName, 'result': result}, ensure_ascii=False)
+
+
+@app.route('/pm25-chart')
+def pm25_chart():
+    return render_template("pm25-chart.html")
+
+
 @app.route('/pm25', methods=['GET', 'POST'])
 def pm25():
     sort = False
@@ -68,5 +84,5 @@ def get_time():
 
 
 if __name__ == '__main__':
-    print(get_time())
+    print(get_pm25_json())
     app.run(debug=True)

@@ -7,6 +7,7 @@ url = 'https://sta.ci.taiwan.gov.tw/STA_AirQuality_v2/v1.0/Datastreams?$expand=T
 
 def get_pm25(sort=False, show=False):
     columns = ['縣市', '站點名稱', 'PM2.5數值', '更新時間']
+    columns = ['city', 'stationName', 'result', 'resultTime']
     datas = pd.read_json(url)['value']
     values = []
     for data in datas:
