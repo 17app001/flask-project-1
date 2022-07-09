@@ -1,4 +1,6 @@
 const chart1El = document.querySelector("#main");
+const chart2El = document.querySelector("#six");
+
 const pm25HighSite = document.querySelector("#pm25_high_site");
 const pm25HighValue = document.querySelector("#pm25_high_value");
 const pm25LowSite = document.querySelector("#pm25_low_site");
@@ -7,6 +9,7 @@ const pm25LowValue = document.querySelector("#pm25_low_value");
 console.log()
 
 let chart1 = echarts.init(chart1El);
+let chart2 = echarts.init(chart2El);
 
 
 $(document).ready(() => {
@@ -30,6 +33,28 @@ function renderMaxPM25(data) {
 
 }
 
+
+function drawSixPM25() {
+    chart2.showLoading();
+    $.ajax(
+        {
+            url: "/six-pm25-json",
+            type: "POST",
+            dataType: "json",
+            success: (data) => {
+                console.log(data);
+                chart2.hideLoading();
+                drawChart2(data);
+            },
+            error: () => {
+                chart2.hideLoading();
+                alert("六都資料讀取失敗!");
+            }
+        }
+    );
+}
+
+
 function drawPM25() {
     pm25HighSite.innerText = "N/A";
     pm25HighValue.innerText = 0;
@@ -45,10 +70,10 @@ function drawPM25() {
             dataType: "json",
             success: (data) => {
                 chart1.hideLoading();
-
                 $("#date").text(data["time"]);
                 drawChart1(data);
                 renderMaxPM25(data);
+                drawSixPM25();
             },
             error: () => {
                 chart1.hideLoading();
@@ -62,7 +87,7 @@ function drawChart1(datas) {
     var option;
     option = {
         title: {
-            text: 'PM25全台資訊'
+            text: 'PM2.5全台資訊'
         },
         toolbox: {
             show: true,
@@ -104,8 +129,58 @@ function drawChart1(datas) {
     option && chart1.setOption(option);
 }
 
-function darwChart2(datas) {
+function drawChart2(datas) {
+    var option;
+    option = {
+        legend: {
+            data: ['PM2.5']
+        },
+        xAxis: {
+            type: 'category',
+            data: datas['citys']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                itemStyle: {
+                    color: '#800080'
+                },
+                name: 'PM2.5',
+                data: datas['result'],
+                type: 'bar',
+                showBackground: true,
+                backgroundStyle: {
+                    color: 'rgba(180, 180, 180, 0.2)'
+                }
+            }
+        ]
+    };
 
+    option && chart2.setOption(option);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function _darwChart(datas) {
     var option;
 
     // prettier-ignore
