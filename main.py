@@ -84,5 +84,5 @@ def get_time():
 
 
 if __name__ == '__main__':
-    print(get_pm25_json())
+    # print(get_pm25_json())
     app.run(debug=True)
