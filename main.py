@@ -9,7 +9,7 @@ from scrape.pm25 import get_pm25, get_six_pm25, get_citys, get_city_pm25
 app = Flask(__name__)
 
 
-@app.route('/city-pm25/<city>',methods=['POST'])
+@app.route('/city-pm25/<city>', methods=['POST'])
 def get_city_json(city):
     stationName, result = get_city_pm25(city)
 

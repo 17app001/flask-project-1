@@ -10,19 +10,31 @@ url = 'https://sta.ci.taiwan.gov.tw/STA_AirQuality_v2/v1.0/Datastreams?$expand=T
 df = None
 
 
-
 def get_city_pm25(city):
-    datas=df.groupby('city').get_group(city)[['stationName','result']].values
+    global df
+    stationName, result = [], []
 
-    stationName=[data[0] for data in datas]
-    result=[data[1] for data in datas]
+    try:
+        datas = df.groupby('city').get_group(
+            city)[['stationName', 'result']].values
 
-    return stationName,result
+        stationName = [data[0] for data in datas]
+        result = [data[1] for data in datas]
+    except Exception as e:
+        print(e)
+
+    return stationName, result
+
 
 def get_citys():
     global df
+    citys = []
+    try:
+        citys = sorted(list(set(df['city'])))
+    except Exception as e:
+        print(e)
 
-    return list(set(df['city']))
+    return citys
 
 
 def get_six_pm25():
@@ -47,7 +59,6 @@ def get_pm25(sort=False, show=False):
     global df
 
     columns = ['縣市', '站點名稱', 'PM2.5數值', '更新時間']
-    columns = ['city', 'stationName', 'result', 'resultTime']
     datas = pd.read_json(url)['value']
     values = []
     for data in datas:
@@ -62,7 +73,8 @@ def get_pm25(sort=False, show=False):
                 print(city, stationName, result, resultTime)
             values.append([city, stationName, result, resultTime])
 
-            df = pd.DataFrame(values, columns=columns)
+            df = pd.DataFrame(
+                values, columns=['city', 'stationName', 'result', 'resultTime'])
 
         except Exception as e:
             print(e)
